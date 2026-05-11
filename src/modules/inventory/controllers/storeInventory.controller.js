@@ -15,17 +15,26 @@ import {
 ========================================= */
 
 export const assignProductToStore =
-  async (data) => {
+  async (req, res) => {
 
     try {
 
       const inventory =
 
         await assignProductToStoreService(
-          data
+          req.body
         );
 
-      return inventory;
+      return res.status(201).json({
+
+        success: true,
+
+        message:
+          "Product assigned successfully",
+
+        inventory,
+
+      });
 
     }
 
@@ -39,7 +48,16 @@ export const assignProductToStore =
 
       );
 
-      throw err;
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          err.message ||
+
+          "Failed to assign product",
+
+      });
 
     }
 
@@ -50,9 +68,12 @@ export const assignProductToStore =
 ========================================= */
 
 export const getStoreInventory =
-  async (storeId) => {
+  async (req, res) => {
 
     try {
+
+      const { storeId } =
+        req.params;
 
       const inventory =
 
@@ -60,7 +81,16 @@ export const getStoreInventory =
           storeId
         );
 
-      return inventory;
+      return res.status(200).json({
+
+        success: true,
+
+        count:
+          inventory.length,
+
+        inventory,
+
+      });
 
     }
 
@@ -74,7 +104,16 @@ export const getStoreInventory =
 
       );
 
-      throw err;
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          err.message ||
+
+          "Failed to fetch store inventory",
+
+      });
 
     }
 
@@ -85,7 +124,7 @@ export const getStoreInventory =
 ========================================= */
 
 export const getAllInventory =
-  async () => {
+  async (req, res) => {
 
     try {
 
@@ -93,7 +132,16 @@ export const getAllInventory =
 
         await getAllInventoryService();
 
-      return inventory;
+      return res.status(200).json({
+
+        success: true,
+
+        count:
+          inventory.length,
+
+        inventory,
+
+      });
 
     }
 
@@ -107,7 +155,16 @@ export const getAllInventory =
 
       );
 
-      throw err;
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          err.message ||
+
+          "Failed to fetch all inventory",
+
+      });
 
     }
 
@@ -118,15 +175,15 @@ export const getAllInventory =
 ========================================= */
 
 export const updateInventoryQuantity =
-  async (
-
-    inventoryId,
-
-    quantity
-
-  ) => {
+  async (req, res) => {
 
     try {
+
+      const { inventoryId } =
+        req.params;
+
+      const { quantity } =
+        req.body;
 
       const inventory =
 
@@ -138,7 +195,16 @@ export const updateInventoryQuantity =
 
         );
 
-      return inventory;
+      return res.status(200).json({
+
+        success: true,
+
+        message:
+          "Inventory updated successfully",
+
+        inventory,
+
+      });
 
     }
 
@@ -152,7 +218,16 @@ export const updateInventoryQuantity =
 
       );
 
-      throw err;
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          err.message ||
+
+          "Failed to update inventory",
+
+      });
 
     }
 
