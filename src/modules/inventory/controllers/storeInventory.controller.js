@@ -15,15 +15,66 @@ import {
 ========================================= */
 
 export const assignProductToStore =
+
   async (req, res) => {
 
     try {
 
+      /* =====================================
+         BODY
+      ===================================== */
+
+      const {
+
+        store,
+        product,
+        quantity,
+        lowStockLimit,
+
+      } = req.body;
+
+      /* =====================================
+         VALIDATION
+      ===================================== */
+
+      if (
+
+        !store ||
+
+        !product
+
+      ) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+
+            "Store and product are required",
+
+        });
+
+      }
+
+      /* =====================================
+         SERVICE
+      ===================================== */
+
       const inventory =
 
-        await assignProductToStoreService(
-          req.body
-        );
+        await assignProductToStoreService({
+
+          store,
+          product,
+          quantity,
+          lowStockLimit,
+
+        });
+
+      /* =====================================
+         SUCCESS
+      ===================================== */
 
       return res.status(201).json({
 
@@ -53,6 +104,7 @@ export const assignProductToStore =
         success: false,
 
         message:
+
           err.message ||
 
           "Failed to assign product",
@@ -68,18 +120,50 @@ export const assignProductToStore =
 ========================================= */
 
 export const getStoreInventory =
+
   async (req, res) => {
 
     try {
 
+      /* =====================================
+         PARAMS
+      ===================================== */
+
       const { storeId } =
         req.params;
+
+      /* =====================================
+         VALIDATION
+      ===================================== */
+
+      if (!storeId) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            "Store ID is required",
+
+        });
+
+      }
+
+      /* =====================================
+         SERVICE
+      ===================================== */
 
       const inventory =
 
         await getStoreInventoryService(
+
           storeId
+
         );
+
+      /* =====================================
+         SUCCESS
+      ===================================== */
 
       return res.status(200).json({
 
@@ -109,6 +193,7 @@ export const getStoreInventory =
         success: false,
 
         message:
+
           err.message ||
 
           "Failed to fetch store inventory",
@@ -124,13 +209,22 @@ export const getStoreInventory =
 ========================================= */
 
 export const getAllInventory =
+
   async (req, res) => {
 
     try {
 
+      /* =====================================
+         SERVICE
+      ===================================== */
+
       const inventory =
 
         await getAllInventoryService();
+
+      /* =====================================
+         SUCCESS
+      ===================================== */
 
       return res.status(200).json({
 
@@ -160,6 +254,7 @@ export const getAllInventory =
         success: false,
 
         message:
+
           err.message ||
 
           "Failed to fetch all inventory",
@@ -175,15 +270,60 @@ export const getAllInventory =
 ========================================= */
 
 export const updateInventoryQuantity =
+
   async (req, res) => {
 
     try {
+
+      /* =====================================
+         PARAMS + BODY
+      ===================================== */
 
       const { inventoryId } =
         req.params;
 
       const { quantity } =
         req.body;
+
+      /* =====================================
+         VALIDATION
+      ===================================== */
+
+      if (!inventoryId) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            "Inventory ID is required",
+
+        });
+
+      }
+
+      if (
+
+        quantity === undefined ||
+
+        quantity === null
+
+      ) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            "Quantity is required",
+
+        });
+
+      }
+
+      /* =====================================
+         SERVICE
+      ===================================== */
 
       const inventory =
 
@@ -194,6 +334,10 @@ export const updateInventoryQuantity =
           quantity
 
         );
+
+      /* =====================================
+         SUCCESS
+      ===================================== */
 
       return res.status(200).json({
 
@@ -223,6 +367,7 @@ export const updateInventoryQuantity =
         success: false,
 
         message:
+
           err.message ||
 
           "Failed to update inventory",
