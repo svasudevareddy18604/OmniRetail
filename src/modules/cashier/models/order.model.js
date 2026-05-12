@@ -4,241 +4,192 @@ import mongoose from "mongoose";
    ORDER ITEM SCHEMA
 ========================================= */
 
-const orderItemSchema =
-  new mongoose.Schema({
+const orderItemSchema = new mongoose.Schema({
 
-    productId: {
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+  },
 
-      type:
-        mongoose.Schema.Types.ObjectId,
+  inventoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "StoreInventory",
+  },
 
-      ref: "Product",
+  name: {
+    type: String,
+    required: true,
+  },
 
-      required: true,
+  sku: {
+    type: String,
+    default: "",
+  },
 
-    },
+  price: {
+    type: Number,
+    required: true,
+  },
 
-    name: {
+  quantity: {
+    type: Number,
+    required: true,
+  },
 
-      type: String,
+  subtotal: {
+    type: Number,
+    required: true,
+  },
 
-      required: true,
-
-      trim: true,
-
-    },
-
-    sku: {
-
-      type: String,
-
-      required: true,
-
-      trim: true,
-
-      uppercase: true,
-
-    },
-
-    price: {
-
-      type: Number,
-
-      required: true,
-
-      min: 0,
-
-    },
-
-    quantity: {
-
-      type: Number,
-
-      required: true,
-
-      min: 1,
-
-    },
-
-    subtotal: {
-
-      type: Number,
-
-      required: true,
-
-      min: 0,
-
-    },
-
-  });
+});
 
 /* =========================================
    ORDER SCHEMA
 ========================================= */
 
-const orderSchema =
-  new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
 
-    {
+  {
 
-      orderNumber: {
+    /* =====================================
+       ORDER NUMBER
+    ===================================== */
 
-        type: String,
-
-        unique: true,
-
-      },
-
-      items: [
-
-        orderItemSchema
-
-      ],
-
-      subtotal: {
-
-        type: Number,
-
-        required: true,
-
-        min: 0,
-
-      },
-
-      tax: {
-
-        type: Number,
-
-        default: 0,
-
-        min: 0,
-
-      },
-
-      discount: {
-
-        type: Number,
-
-        default: 0,
-
-        min: 0,
-
-      },
-
-      total: {
-
-        type: Number,
-
-        required: true,
-
-        min: 0,
-
-      },
-
-      paymentMethod: {
-
-        type: String,
-
-        enum: [
-
-          "Cash",
-
-          "UPI",
-
-          "Card",
-
-        ],
-
-        required: true,
-
-      },
-
-      paymentStatus: {
-
-        type: String,
-
-        enum: [
-
-          "Pending",
-
-          "Paid",
-
-          "Failed",
-
-        ],
-
-        default: "Paid",
-
-      },
-
-      cashierName: {
-
-        type: String,
-
-        default: "Cashier",
-
-      },
-
-      notes: {
-
-        type: String,
-
-        default: "",
-
-      },
-
+    orderNumber: {
+      type: String,
+      unique: true,
     },
 
-    {
+    /* =====================================
+       ITEMS
+    ===================================== */
 
-      timestamps: true,
+    items: [orderItemSchema],
 
-    }
+    itemsCount: {
+      type: Number,
+      default: 0,
+    },
 
-  );
+    /* =====================================
+       BILLING
+    ===================================== */
 
-/* =========================================
-   AUTO ORDER NUMBER
-========================================= */
+    subtotal: {
+      type: Number,
+      default: 0,
+    },
 
-orderSchema.pre(
+    tax: {
+      type: Number,
+      default: 0,
+    },
 
-  "save",
+    discount: {
+      type: Number,
+      default: 0,
+    },
 
-  function () {
+    total: {
+      type: Number,
+      default: 0,
+    },
 
-    // GENERATE ORDER NUMBER
+    /* =====================================
+       PAYMENT
+    ===================================== */
 
-    if (
-      !this.orderNumber
-    ) {
+    paymentMethod: {
+      type: String,
+      enum: ["Cash", "Card", "UPI", "Online", "Other"],
+      default: "Cash",
+    },
 
-      const random =
-        Math.floor(
+    paymentStatus: {
+      type: String,
+      enum: ["Paid", "Pending", "Failed", "Refunded"],
+      default: "Paid",
+    },
 
-          100000 +
-          Math.random() *
-          900000
+    /* =====================================
+       ORDER STATUS  <-- WAS MISSING
+    ===================================== */
 
-        );
+    orderStatus: {
+      type: String,
+      enum: ["Completed", "Pending", "Cancelled", "Refunded"],
+      default: "Completed",
+    },
 
-      this.orderNumber =
-        `ORD-${random}`;
+    /* =====================================
+       CASHIER  <-- cashierId WAS MISSING
+    ===================================== */
 
-    }
+    cashierName: {
+      type: String,
+      default: "Cashier",
+    },
 
+    cashierId: {
+      type: String,
+      default: "N/A",
+    },
+
+    /* =====================================
+       STORE  <-- BOTH WERE MISSING
+    ===================================== */
+
+    storeId: {
+      type: String,
+      default: "",
+    },
+
+    storeName: {
+      type: String,
+      default: "Main Store",
+    },
+
+    /* =====================================
+       NOTES
+    ===================================== */
+
+    notes: {
+      type: String,
+      default: "",
+    },
+
+  },
+
+  {
+    timestamps: true,
   }
 
 );
 
 /* =========================================
+   AUTO-GENERATE ORDER NUMBER
+========================================= */
+
+orderSchema.pre("save", async function (next) {
+
+  if (!this.orderNumber) {
+
+    const random = Math.floor(
+      100000 + Math.random() * 900000
+    );
+
+    this.orderNumber = "ORD-" + random;
+
+  }
+
+  next();
+
+});
+
+/* =========================================
    EXPORT
 ========================================= */
 
-const Order =
-  mongoose.model(
-    "Order",
-    orderSchema
-  );
+const Order = mongoose.model("Order", orderSchema);
 
 export default Order;
