@@ -118,7 +118,7 @@ orderSchema.pre("save", function (next) {
     const random = Math.floor(100000 + Math.random() * 900000);
     this.orderNumber = "ORD-" + random;
   }
-  next();
+  
 });
 
 const Order = mongoose.model("Order", orderSchema);
