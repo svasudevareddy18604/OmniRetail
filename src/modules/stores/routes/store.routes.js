@@ -1,25 +1,34 @@
 import express from "express";
 
 import {
+
   assignProductToStore,
+
   getStoreInventory,
+
   getAllInventory,
+
   updateInventoryQuantity,
-} from "../../inventory/controllers/storeInventory.controller.js";
+
+} from "../controllers/storeInventory.controller.js";
 
 /* =========================================
    ROUTER
 ========================================= */
 
-const router = express.Router();
+const router =
+  express.Router();
 
 /* =========================================
-   ASSIGN PRODUCT TO STORE
+   ASSIGN PRODUCT
 ========================================= */
 
 router.post(
+
   "/assign",
+
   assignProductToStore
+
 );
 
 /* =========================================
@@ -27,8 +36,11 @@ router.post(
 ========================================= */
 
 router.get(
+
   "/store/:storeId",
+
   getStoreInventory
+
 );
 
 /* =========================================
@@ -36,21 +48,27 @@ router.get(
 ========================================= */
 
 router.get(
+
   "/all",
+
   getAllInventory
+
 );
 
 /* =========================================
-   UPDATE INVENTORY QUANTITY
+   UPDATE INVENTORY
 ========================================= */
 
 router.put(
+
   "/:inventoryId",
+
   updateInventoryQuantity
+
 );
 
 /* =========================================
-   EXPORT ROUTER
+   EXPORT
 ========================================= */
 
 export default router;

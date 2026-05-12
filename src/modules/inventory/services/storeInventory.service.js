@@ -1,5 +1,9 @@
 import StoreInventory from "../models/storeInventory.model.js";
 
+import Store from "../../stores/models/store.model.js";
+
+import Product from "../../products/models/product.model.js";
+
 /* =========================================
    ASSIGN PRODUCT TO STORE
 ========================================= */
